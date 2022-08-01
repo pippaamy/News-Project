@@ -8,27 +8,17 @@ beforeEach(() => seed(data));
 afterAll(() => {
   if (db.end) db.end();
 });
-describe("GET array of topic objects", ()=> {
-    test ("return property slug & description ", ()=> {
+describe("GET topics", ()=> {
+    test ("return 200 status, returns length", ()=> {
         return request(app).get("/api/topics").expect(200).then(({body})=>
-        {expect(body.msg).toEqual(
-        [
-            {
-              description: 'The man, the Mitch, the legend',
-              slug: 'mitch'
-            },
-            {
-              description: 'Not dogs',
-              slug: 'cats'
-            },
-            {
-              description: 'what books are made of',
-              slug: 'paper'
-            }
-          ]
-          )
+        {expect(body.topics.length).toBeGreaterThanOrEqual(1)
+            body.topics.forEach((topic)=> {expect (topic).toEqual(expect.objectContaining({
+slug : expect.any(String),
+description : expect.any(String)
+    
+              }))})
   })
-} ) 
+} )
 });
 
 describe("handle all bad URLs", () => {
@@ -37,7 +27,7 @@ describe("handle all bad URLs", () => {
       .get("/api/nottopics")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("bad request");
+        expect(body.msg).toBe("path not found");
       });
   });
 });

@@ -5,12 +5,12 @@ const {
   
 const app = express();
 
-app.use(express.json());
+//app.use(express.json());
 
 app.get("/api/topics", getTopics);
 
 app.all("*", (req, res) => {
-    res.status(404).send({ msg: "bad request" });
+    res.status(404).send({ msg: "path not found" });
   });
   
 

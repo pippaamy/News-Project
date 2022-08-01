@@ -4,7 +4,7 @@ const {
 
   exports.getTopics = (req, res) => {
      selectTopics().then((topics) => {
-      res.status(200).send({msg:topics});
+      res.status(200).send({topics});
     });
   };
   
