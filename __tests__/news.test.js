@@ -10,7 +10,9 @@ afterAll(() => {
 });
 describe("GET array of topic objects", ()=> {
     test ("return property slug & description ", ()=> {
-        return request(app).get("/api/topics").expect([
+        return request(app).get("/api/topics").expect(200).then(({body})=>
+        {expect(body.msg).toEqual(
+        [
             {
               description: 'The man, the Mitch, the legend',
               slug: 'mitch'
@@ -24,9 +26,10 @@ describe("GET array of topic objects", ()=> {
               slug: 'paper'
             }
           ]
-          );
+          )
   })
-}); 
+} ) 
+});
 
 describe("handle all bad URLs", () => {
   test("should handle all bad URLs", () => {
@@ -38,5 +41,3 @@ describe("handle all bad URLs", () => {
       });
   });
 });
-  
-    
