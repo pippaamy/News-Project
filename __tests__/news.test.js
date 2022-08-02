@@ -111,6 +111,16 @@ avatar_url :expect.any(String)
 })
 })
 
+describe("GET articles by ID",
+()=> {
+    test("return status 200", ()=>{
+        return request(app).get("/api/articles/2").expect(200).then(({body})=> {
+        const {article} = body;
+           expect(article).toHaveProperty("comment_count")
+        })
+    })
+  });
+
 
 describe("handle all bad URLs", () => {
   test("should handle all bad URLs", () => {
