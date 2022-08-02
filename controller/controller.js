@@ -1,5 +1,5 @@
 const {
-    selectTopics, selectArticleById
+    selectTopics, selectArticleById, changeArticleById 
   } = require("../model/model");
 
   exports.getTopics = (req, res) => {
@@ -16,6 +16,13 @@ const {
     ).catch(next);
   }
 
+  exports.patchArticleById = (req,res,next) =>{
+    const articleId = req.params.article_id;
+    const votes = req.body.inc_votes
+    changeArticleById(articleId,votes ).then((article)=>{
+      res.status(200).send({article});
+    }).catch(next);
+  }
 
 
   
