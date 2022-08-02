@@ -78,14 +78,16 @@ test("havent added item in incorrect form",()=> {
 expect(body.msg).toBe("bad request")
 })
 })
-
-
+test("returns a 404  when invalid request",()=> {
+  return request(app).patch("/api/articles/990971") .send({
+    inc_votes : -20
+  })
+ .expect(404).then(({body})=>{
+expect(body.msg).toBe("path not found")
+})
 })
 
-
-
-
-
+})
 
 
 
