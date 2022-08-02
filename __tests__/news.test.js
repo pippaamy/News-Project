@@ -95,6 +95,8 @@ expect(body.msg).toBe("path not found")
 
 })
 
+
+
 describe("GET users",()=>{
   test("returns users as an array of object",()=>{
     return request(app).get("/api/users").expect(200).then(({body})=>
@@ -108,9 +110,6 @@ avatar_url :expect.any(String)
   })
 })
 })
-
-
-
 
 
 describe("handle all bad URLs", () => {
