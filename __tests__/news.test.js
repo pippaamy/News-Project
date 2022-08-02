@@ -21,7 +21,7 @@ description : expect.any(String)
 } )
 });
 
-describe("GET topics by ID",
+describe("GET articles by ID",
 ()=> {
     test("return status 200", ()=>{
         return request(app).get("/api/articles/2").expect(200).then(({body})=> {
@@ -48,6 +48,55 @@ expect(body.msg).toBe("bad request")
 })
 
 });
+
+describe("PATCH article", ()=> {
+  test ("change an article by positive number",()=>{
+    return request(app).patch("/api/articles/1") .send({
+      inc_votes : 1 
+    }).expect(200).then(({body})=>{
+      expect(body.article).toHaveProperty("votes")
+     expect(body.article.votes).toBe(101);
+    })
+  })
+  test ("change an article by negative number",()=>{
+    return request(app).patch("/api/articles/1") .send({
+      inc_votes : -20
+    }).expect(200).then(({body})=>{
+      expect(body.article).toHaveProperty("votes")
+     expect(body.article.votes).toBe(80);
+    })
+  })
+  test("doesnt add item in incorrect form",()=> {
+    return request(app).patch("/api/articles/1") .send("hello"
+) .expect(400).then(({body})=>{
+  expect(body.msg).toBe("bad request")
+  })
+})
+test("havent added item in incorrect form",()=> {
+  return request(app).patch("/api/articles/1") .send({inc_votes:"hello"}
+) .expect(400).then(({body})=>{
+expect(body.msg).toBe("bad request")
+})
+})
+test("throw err when key of object spelt wrong",()=> {
+  return request(app).patch("/api/articles/1") .send({in_votes:"hello"}
+) .expect(400).then(({body})=>{
+expect(body.msg).toBe("bad request")
+})
+})
+test("returns a 404  when invalid request",()=> {
+  return request(app).patch("/api/articles/990971") .send({
+    inc_votes : -20
+  })
+ .expect(404).then(({body})=>{
+expect(body.msg).toBe("path not found")
+})
+})
+
+})
+
+
+
 
 
 describe("handle all bad URLs", () => {
