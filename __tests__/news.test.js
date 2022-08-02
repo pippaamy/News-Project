@@ -78,6 +78,12 @@ test("havent added item in incorrect form",()=> {
 expect(body.msg).toBe("bad request")
 })
 })
+test("throw err when key of object spelt wrong",()=> {
+  return request(app).patch("/api/articles/1") .send({in_votes:"hello"}
+) .expect(400).then(({body})=>{
+expect(body.msg).toBe("bad request")
+})
+})
 test("returns a 404  when invalid request",()=> {
   return request(app).patch("/api/articles/990971") .send({
     inc_votes : -20
