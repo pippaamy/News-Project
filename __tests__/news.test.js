@@ -95,6 +95,20 @@ expect(body.msg).toBe("path not found")
 
 })
 
+describe("GET users",()=>{
+  test("returns users as an array of object",()=>{
+    return request(app).get("/api/users").expect(200).then(({body})=>
+        {expect(body.users.length).toBeGreaterThanOrEqual(1)
+            body.users.forEach((user)=> {expect (user).toEqual(expect.objectContaining({
+username : expect.any(String),
+name : expect.any(String),
+avatar_url :expect.any(String)
+    
+            }))})
+  })
+})
+})
+
 
 
 
