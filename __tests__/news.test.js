@@ -2,8 +2,9 @@ const app = require("../app/app");
 const request = require("supertest");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed")
-const data = require("../db/data/test-data/index")
-const sorted = require("jest-sorted")
+const data = require("../db/data/test-data/index");
+const { string } = require("pg-format");
+
 
 beforeEach(() => seed(data));
 afterAll(() => {
@@ -37,16 +38,16 @@ describe("GET articles by ID",
         })
     })
 
-test("returns a 404  when invalid request", ()=>{
-  return request(app).get("/api/articles/123546").expect(404).then (({body})=>{
-expect(body.msg).toBe("path not found")
-  })
-})
-test("returns a 400 when invalid request", ()=>{
-  return request(app).get("/api/articles/baaaaaanana").expect(400).then (({body})=>{
-expect(body.msg).toBe("bad request")
-  })
-})
+    test("returns a 404  when invalid request", ()=>{
+      return request(app).get("/api/articles/123546").expect(404).then (({body})=>{
+    expect(body.msg).toBe("path not found")
+      })
+    })
+    test("returns a 400 when invalid request", ()=>{
+      return request(app).get("/api/articles/baaaaaanana").expect(400).then (({body})=>{
+    expect(body.msg).toBe("bad request")
+      })
+    })
 
 });
 
@@ -146,6 +147,35 @@ test("returns in descending order",()=> {
   });
 });
   
+describe("GET article's comments", ()=>{
+  test("returns comments of article received by article id", ()=> {
+return request(app).get("/api/articles/1/comments").expect(200).then(({body})=> { 
+   expect(body.comments.length).toBeGreaterThanOrEqual(1) 
+    body.comments.forEach((comments)=> { expect (comments).toEqual(expect.objectContaining({
+comment_id : expect.any(Number),
+votes: expect.any(Number),
+created_at: expect.any(String),
+author :expect.any(String),
+body : expect.any(String), 
+}))})
+})
+  })
+
+  test("returns a 404  when invalid request", ()=>{
+    return request(app).get("/api/articles/123546/comments").expect(404).then (({body})=>{
+  expect(body.msg).toBe("path not found")
+    })
+  })
+  test("returns a 400 when invalid request", ()=>{
+    return request(app).get("/api/articles/baaaaaanana/comments").expect(400).then (({body})=>{
+  expect(body.msg).toBe("bad request")
+    })
+  })
+})
+
+
+
+
 describe("handle all bad URLs", () => {
   test("should handle all bad URLs", () => {
     return request(app)
