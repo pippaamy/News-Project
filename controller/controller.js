@@ -1,6 +1,6 @@
 const { formatComments } = require("../db/seeds/utils");
 const {
-    selectTopics, selectArticleById, changeArticleById, selectUsers
+    selectTopics, selectArticleById, changeArticleById, selectUsers, selectArticles
   } = require("../model/model");
 
   exports.getTopics = (req, res) => {
@@ -32,3 +32,8 @@ const {
     }).catch(next);
   };
 
+  exports.getArticles = (req,res,next) =>{
+    selectArticles().then((articles) => {
+      res.status(200).send({articles});
+    }).catch(next);
+  }

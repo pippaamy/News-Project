@@ -3,6 +3,7 @@ const request = require("supertest");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed")
 const data = require("../db/data/test-data/index")
+const sorted = require("jest-sorted")
 
 beforeEach(() => seed(data));
 afterAll(() => {
@@ -66,13 +67,13 @@ describe("PATCH article", ()=> {
      expect(body.article.votes).toBe(80);
     })
   })
-  test("doesnt add item in incorrect form",()=> {
+  test("does not add item in incorrect form",()=> {
     return request(app).patch("/api/articles/1") .send("hello"
 ) .expect(400).then(({body})=>{
   expect(body.msg).toBe("bad request")
   })
 })
-test("havent added item in incorrect form",()=> {
+test("have not added item in incorrect form",()=> {
   return request(app).patch("/api/articles/1") .send({inc_votes:"hello"}
 ) .expect(400).then(({body})=>{
 expect(body.msg).toBe("bad request")
@@ -121,7 +122,30 @@ describe("GET articles by ID",
     })
   });
 
+  describe("GET articles (with comments)", ()=>{
+test("returns articles in array of objects with properties needed", ()=>{
+  return request(app).get("/api/articles").expect(200).then(({body})=>
+  { expect(body.articles.length).toBeGreaterThanOrEqual(1) 
+      body.articles.forEach((article)=> { expect (article).toEqual(expect.objectContaining({
+author : expect.any(String),
+title : expect.any(String),
+article_id : expect.any(Number),
+body : expect.any(String),
+topic: expect.any(String),
+created_at :expect.any(String),
+votes : expect.any(Number),
+comment_count: expect.any(String)   
+ }))})
+})
+})
 
+test("returns in descending order",()=> {
+  return request(app).get("/api/articles").expect(200).then(({body})=> {const article = body.articles; 
+    expect(article).toBeSortedBy(article.created_at,{descending:true})} )
+
+  });
+});
+  
 describe("handle all bad URLs", () => {
   test("should handle all bad URLs", () => {
     return request(app)
