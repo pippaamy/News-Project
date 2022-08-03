@@ -13,9 +13,13 @@ app.get("/api/articles/:article_id", getArticleById)
 
 app.patch("/api/articles/:article_id", patchArticleById)
 
-
 app.get("/api/users", getUsers)
 
+app.all("*", (req, res) => {
+    
+  res.status(404).send({ msg: "path not found" });
+});
+//////////////////////////////////////////////////////////////////////
   app.use((err, req, res, next) => {
   
     if (err.code === "22P02") {
@@ -31,9 +35,10 @@ app.get("/api/users", getUsers)
       } next(err);
     })
 
-    app.all("*", (req, res) => {
-  
-      res.status(404).send({ msg: "path not found" });
+    app.use((err,req,res)=> {
+      console.log(err, "unhandled error")
     });
+
+    
 
 module.exports = app;

@@ -1,6 +1,7 @@
 const db = require("../db/connection");
 
 
+
 exports.selectTopics = ()=> {
     return db.query("SELECT * FROM topics").then(({rows}) => {
         return rows;
@@ -8,13 +9,15 @@ exports.selectTopics = ()=> {
 }
 
 exports.selectArticleById =(id)=>{
-    return db.query("SELECT * FROM articles WHERE article_id = $1; ", [id]).then((res)=>{
+    return db.query("SELECT articles.*, COUNT(comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id;", [id]).then((res)=>{ 
       if (res.rows.length === 0) {  
                  return Promise.reject({ status: 404, msg: 'path not found' });
           }
+          
         return res.rows[0];
     })
 }
+
 
 exports.changeArticleById = (id,votes) => {
     if (votes === undefined){
@@ -40,3 +43,4 @@ exports.selectUsers = ()=>{
     })
 
 }
+

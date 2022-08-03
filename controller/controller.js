@@ -1,3 +1,4 @@
+const { formatComments } = require("../db/seeds/utils");
 const {
     selectTopics, selectArticleById, changeArticleById, selectUsers
   } = require("../model/model");
@@ -24,13 +25,10 @@ const {
     }).catch(next);
   }
 
-  
+
   exports.getUsers = (req,res,next)=>{
     selectUsers().then((users) => {
       res.status(200).send({users});
     }).catch(next);
   };
 
-  
-
-  
