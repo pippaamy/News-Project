@@ -61,3 +61,10 @@ exports.selectArticleComments = (id) =>{
     })
 
 }
+
+exports.createArticleComments = (id,body,username) => { 
+    return db.query("INSERT INTO comments (body,votes,author, article_id, created_at) VALUES ($2,0, $3,$1, NOW()) RETURNING *;", [id,body,username]).then(({rows})=> { 
+        return rows;
+    }).catch(console.log)
+    
+}

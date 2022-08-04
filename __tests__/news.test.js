@@ -3,7 +3,6 @@ const request = require("supertest");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed")
 const data = require("../db/data/test-data/index");
-const { string } = require("pg-format");
 
 
 beforeEach(() => seed(data));
@@ -173,7 +172,20 @@ body : expect.any(String),
   })
 })
 
+describe("POST comment", ()=>{
+  test("post comment when given an object", ()=>{return request(app).post("/api/articles/1/comments") .send({
+    username: "butter_bridge",
+    body: "this is my favourite article EVER!!!"
+  }).expect(201).then(({body})=>{ const comments =body.comments[0];
+    expect(comments).toHaveProperty("author")
+   expect(comments).toHaveProperty("body")
+   expect(comments).toHaveProperty("article_id")
+   expect(comments).toHaveProperty("votes")
+   expect(comments).toHaveProperty("created_at")
+  })
 
+  })
+})
 
 
 describe("handle all bad URLs", () => {
