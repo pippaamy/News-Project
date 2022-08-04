@@ -54,10 +54,23 @@ exports.selectArticles = ()=>{
 
 exports.selectArticleComments = (id) =>{ 
     return db.query("SELECT * FROM comments WHERE article_id = $1", [id]).then(({rows}) => {
-        if (rows.length === 0) {  
+        if (rows.length ===0) {  
             return Promise.reject({ status: 404, msg: 'path not found' });
      }
         return rows;
     })
 
+}
+
+exports.createArticleComments = (id,body,username) => { 
+    if (body === undefined || username === undefined){
+        return Promise.reject({ status: 400, msg: 'bad request' })
+    } 
+    return db.query("INSERT INTO comments (body,votes,author, article_id, created_at) VALUES ($2,0, $3,$1, NOW()) RETURNING *;", [id,body,username]).then(({rows})=> { 
+        if (rows.length === 0){
+            return Promise.reject({status: 404, msg :"path not found"})
+        }
+
+        return rows;
+    })
 }

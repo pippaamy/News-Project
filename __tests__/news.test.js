@@ -3,7 +3,6 @@ const request = require("supertest");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed")
 const data = require("../db/data/test-data/index");
-const { string } = require("pg-format");
 
 
 beforeEach(() => seed(data));
@@ -174,6 +173,51 @@ body : expect.any(String),
 })
 
 
+describe("POST comment", ()=>{
+  test("post comment when given an object", ()=>{return request(app).post("/api/articles/1/comments") .send({
+    username: "butter_bridge",
+    body: "this is my favourite article EVER!!!"
+  }).expect(201).then(({body})=>{ const comments =body.comments[0];
+    expect(comments).toHaveProperty("author")
+   expect(comments).toHaveProperty("body")
+   expect(comments).toHaveProperty("article_id")
+   expect(comments).toHaveProperty("votes")
+   expect(comments).toHaveProperty("created_at")
+  })
+
+  })
+  test("returns a 404  when invalid request", ()=>{
+    return request(app).post("/api/articles/123546/comments").send({
+      username: "butter_bridge",
+      body: "this is my favourite article EVER!!!"
+    }).expect(404).then (({body})=>{
+  expect(body.msg).toBe("path not found")
+    })
+  })
+  test("returns a 400 when invalid request", ()=>{
+    return request(app).post("/api/articles/baanana/comments") .send({
+      username: "butter_bridge",
+      body: "this is my favourite article EVER!!!"
+    }).expect(400).then (({body})=>{
+  expect(body.msg).toBe("bad request")
+    })
+  })
+  test("returns a 400 when username spelt incorrectly", ()=>{
+    return request(app).post("/api/articles/1/comments").send ({usename: "butterbridge", body: "this is cool!"}).expect(400).then (({body})=>{
+  expect(body.msg).toBe("bad request")
+    })
+  })
+  test("returns a 400 when key spelt incorrectly", ()=>{
+    return request(app).post("/api/articles/1/comments").send({username: "butterbridge", bdy : "this is fine!"}).expect(400).then (({body})=>{
+  expect(body.msg).toBe("bad request")
+    })
+  })
+  test("returns a 400 when key spelt incorrectly", ()=>{
+    return request(app).post("/api/articles/1/comments").send("hello").expect(400).then (({body})=>{
+  expect(body.msg).toBe("bad request")
+    })
+  })
+})
 
 
 describe("handle all bad URLs", () => {
