@@ -22,7 +22,7 @@ app.get("/api/articles/:article_id/comments", getArticleComments)
 app.post("/api/articles/:article_id/comments", postArticleComments)
 
 app.all("*", (req, res) => {
-    
+  
   res.status(404).send({ msg: "path not found" });
 });
 //////////////////////////////////////////////////////////////////////
@@ -30,10 +30,14 @@ app.all("*", (req, res) => {
   
     if (err.code === "22P02") {
       res.status(400).send({ msg: 'bad request' });
-    } else{
+    } else if ( err.code === "23503") {
+      res.status(404).send({msg: "path not found"})
+    } 
      
       next(err);
-    } });
+    } );
+
+    
 
     app.use((err,req,res,next)=> {
       if (err.status) {
