@@ -1,8 +1,9 @@
-const { sort } = require("../db/data/test-data/articles");
-const { formatComments } = require("../db/seeds/utils");
+
+const getEndpoints = require("../endpoints.json");
 const {
     selectTopics, selectArticleById, changeArticleById, selectUsers, selectArticles, selectArticleComments, createArticleComments, discardCommentById
   } = require("../model/model");
+  
 
   exports.getTopics = (req, res) => {
      selectTopics().then((topics) => {
@@ -67,6 +68,10 @@ const comment = req.params.comment_id
 discardCommentById(comment). then(()=>{
   res.status(204).send();
 }).catch(next);
+  }
+
+  exports.getApi = (req,res,next) => {
+res.status(200).send(getEndpoints);
   }
 
  
