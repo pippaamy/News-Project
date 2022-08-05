@@ -298,6 +298,20 @@ test("if passed an invalid order returns default 200 ", () => {
     });
   })
 
+  describe("GET /api", ()=> {
+    test("returns object containing endpoints", ()=>{
+      return request(app).get("/api").expect(200).then(({body})=> {  
+        console.log(body)  
+           expect(body).toHaveProperty("GET /api");
+           expect(body).toHaveProperty("GET /api/topics")
+           expect(body).toHaveProperty("GET /api/articles")
+           expect(body).toHaveProperty("GET /api/articles/article:id")
+           expect(body).toHaveProperty("GET /api/users")
+           expect(body).toHaveProperty("GET /api/articles/article:id/comments")
+        })
+      })
+    })
+  
 
 describe("handle all bad URLs", () => {
   test("should handle all bad URLs", () => {
