@@ -69,7 +69,7 @@ exports.selectArticles = (sortby = "created_at", order = "DESC", topic) => {
   LEFT JOIN comments ON comments.article_id = articles.article_id`;
   
     if (topic) {
-      queryString += ` WHERE topic LIKE $1`;
+      queryString += ` WHERE topic = $1`;
       topicArray.push(topic);
     }
   
