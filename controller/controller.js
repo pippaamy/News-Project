@@ -1,7 +1,7 @@
 const { sort } = require("../db/data/test-data/articles");
 const { formatComments } = require("../db/seeds/utils");
 const {
-    selectTopics, selectArticleById, changeArticleById, selectUsers, selectArticles, selectArticleComments, createArticleComments
+    selectTopics, selectArticleById, changeArticleById, selectUsers, selectArticles, selectArticleComments, createArticleComments, discardCommentById
   } = require("../model/model");
 
   exports.getTopics = (req, res) => {
@@ -60,3 +60,13 @@ const {
       res.status(201).send({comments});
     }).catch(next);
   }
+
+  exports.deleteCommentById = (req,res,next) => {
+const comment = req.params.comment_id
+
+discardCommentById(comment). then(()=>{
+  res.status(204).send();
+}).catch(next);
+  }
+
+ 

@@ -274,6 +274,30 @@ test("if passed an invalid order returns default 200 ", () => {
     });
   
 
+    describe("delete comment by ID", ()=> {
+    test("deletes the comment by comment_id", ()=> {
+      return request(app).delete("/api/comments/2").expect(204);
+    })
+
+    test("test should return 404 with a valid id but non-existent", () => {
+      return request(app)
+        .delete("/api/comments/89734562")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("path not found");
+        });
+    })
+
+    test("should return 400 when id is invalid", () => {
+      return request(app)
+        .delete("/api/comments/banana")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
+  })
+
 
 describe("handle all bad URLs", () => {
   test("should handle all bad URLs", () => {
