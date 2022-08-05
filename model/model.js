@@ -44,13 +44,51 @@ exports.selectUsers = ()=>{
 
 }
 
-exports.selectArticles = ()=>{
-    return db.query("SELECT articles.*, COUNT(comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id GROUP BY articles.article_id ORDER BY articles.created_at DESC;").then(({rows})=> {
-        //console.log(rows);
-        return rows;
-    })
 
-}
+exports.selectArticles = (sortby = "created_at", order = "DESC", topic) => {
+    const sortByArray = [
+      "title",
+      "article_id",
+      "topic",
+      "created_at",
+      "votes",
+      "author",
+      "body",
+    ];
+    const orderArray = ["ASC", "DESC"];
+    const topicArray = [];
+    
+  
+    if (!sortByArray.includes(sortby) || !orderArray.includes(order)) {
+      return Promise.reject({ status: 400, msg: "bad request" });
+    }
+  
+    let queryString = `SELECT articles.*,
+  COUNT(comment_id) as comment_count
+  FROM articles 
+  LEFT JOIN comments ON comments.article_id = articles.article_id`;
+  
+    if (topic) {
+      queryString += ` WHERE topic LIKE $1`;
+      topicArray.push(topic);
+    }
+  
+    queryString += ` GROUP BY articles.article_id ORDER BY ${sortby} ${order};`;
+  
+    return db.query(queryString, topicArray).then((result) => {
+      if (!result.rows.length) {
+        return Promise.reject({
+          status: 404,
+          msg: "path not found",
+        });
+      }
+
+      return result.rows;
+    })
+  };
+
+
+
 
 exports.selectArticleComments = (id) =>{ 
     return db.query("SELECT * FROM comments WHERE article_id = $1", [id]).then(({rows}) => {
@@ -74,3 +112,4 @@ exports.createArticleComments = (id,body,username) => {
         return rows;
     })
 }
+

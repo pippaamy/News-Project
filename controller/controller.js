@@ -1,3 +1,4 @@
+const { sort } = require("../db/data/test-data/articles");
 const { formatComments } = require("../db/seeds/utils");
 const {
     selectTopics, selectArticleById, changeArticleById, selectUsers, selectArticles, selectArticleComments, createArticleComments
@@ -32,11 +33,17 @@ const {
     }).catch(next);
   };
 
+
   exports.getArticles = (req,res,next) =>{
-    selectArticles().then((articles) => {
+    const sortBy = req.query.sort_by
+    const order = req.query.order
+    const topic = req.query.topic
+    selectArticles(sortBy, order, topic).then((articles) => {
       res.status(200).send({articles});
     }).catch(next);
   }
+
+
 
   exports.getArticleComments= (req,res,next) => {
     const ID = req.params.article_id

@@ -125,7 +125,7 @@ describe("GET articles by ID",
   describe("GET articles (with comments)", ()=>{
 test("returns articles in array of objects with properties needed", ()=>{
   return request(app).get("/api/articles").expect(200).then(({body})=>
-  { expect(body.articles.length).toBeGreaterThanOrEqual(1) 
+  { expect(body.articles.length).toBe(12) 
       body.articles.forEach((article)=> { expect (article).toEqual(expect.objectContaining({
 author : expect.any(String),
 title : expect.any(String),
@@ -141,7 +141,7 @@ comment_count: expect.any(String)
 
 test("returns in descending order",()=> {
   return request(app).get("/api/articles").expect(200).then(({body})=> {const article = body.articles; 
-    expect(article).toBeSortedBy(article.created_at,{descending:true})} )
+    expect(article).toBeSortedBy("created_at",{descending:true})} )
 
   });
 });
@@ -219,6 +219,61 @@ describe("POST comment", ()=>{
   })
 })
 
+describe("GET article with features", () => {
+
+  test(" sorts by column inserted", ()=>{
+return request(app).get("/api/articles?sortby=author").expect(200).then(({body})=> {const articles = body.articles; 
+  expect(articles).toBeSortedBy(articles.author,{descending:true})} )
+  })
+
+  test(" defaults to sort by date", ()=> {
+    return request(app).get("/api/articles").expect(200).then(({body})=> {const articles = body.articles;
+      expect(articles).toBeSortedBy(articles.created_at,{descending:true})} )
+  })
+
+  test("returns in ascending order", ()=> {
+    return request(app).get("/api/articles?order=ASC").expect(200).then(({body})=> {const articles = body.articles; 
+      expect(articles).toBeSortedBy("created_at",{descending:false})} )
+    
+
+  })
+  test("defaults to descending order & default date", ()=> { return request(app).get("/api/articles").expect(200).then(({body})=> {const articles = body.articles; 
+    expect(articles).toBeSortedBy(articles.created_at,{descending:true})} )
+
+  })
+  test("filters out query by topic wanted", ()=> {
+
+    return request(app).get("/api/articles?topic=cats").expect(200).then(({body})=> 
+    
+    {const articles = body.articles;
+
+      expect(articles).toBeSortedBy("created_at",{descending:true});
+      expect(articles.length).toBeGreaterThanOrEqual(1);
+      body.articles.forEach((article)=> {expect(article.topic).toEqual("cats")
+    } )
+      })
+  })
+    
+  
+  test("tests all functionality at once", ()=> {
+    return request(app).get("/api/articles?sortby=author&order=ASC&topic=mitch").expect(200).then(({body})=> {const articles = body.articles;  
+      expect(articles).toBeSortedBy(articles.author,{descending:false});
+    expect(articles[0].topic).toBe("mitch");} )
+      })
+});
+
+  
+test("if passed an invalid order returns default 200 ", () => {
+  return request(app)
+    .get("/api/articles?sortb=bananas")
+    .expect(200).then(({body})=> {const articles = body.articles;  
+      expect(articles).toBeSortedBy(articles.created_at,{descending:true});
+    
+      })
+  
+    });
+  
+
 
 describe("handle all bad URLs", () => {
   test("should handle all bad URLs", () => {
@@ -229,4 +284,4 @@ describe("handle all bad URLs", () => {
         expect(body.msg).toBe("path not found");
       });
   });
-});
+}) 
